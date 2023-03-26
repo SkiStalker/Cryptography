@@ -80,7 +80,7 @@ namespace Cryptography_Laba_1
         public byte[][] ExpandKey(byte[] key)
         {
             byte[][] result = new byte[16][];
-            FeistelСipher.PBlock(ref key, removeEvenBitsTable);
+            DES.PBlock(ref key, removeEvenBitsTable);
             for (int i = 0; i < 16; i++)
             {
                 byte[] roundKey = new byte[7];
@@ -92,14 +92,14 @@ namespace Cryptography_Laba_1
 
                         CyclicRightShift(ref roundKey, 1, true);
                         CyclicLeftShift(ref roundKey, 1, false);
-                        FeistelСipher.PBlock(ref roundKey, suppressKeyTable);
+                        DES.PBlock(ref roundKey, suppressKeyTable);
                         result[i] = roundKey;
                     }
                     else
                     {
                         CyclicLeftShift(ref roundKey, 1, true);
                         CyclicRightShift(ref roundKey, 1, false);
-                        FeistelСipher.PBlock(ref roundKey, suppressKeyTable);
+                        DES.PBlock(ref roundKey, suppressKeyTable);
                         result[i] = roundKey;
                     }
                 }
@@ -109,14 +109,14 @@ namespace Cryptography_Laba_1
                     {
                         CyclicRightShift(ref roundKey, 2, true);
                         CyclicLeftShift(ref roundKey, 2, false);
-                        FeistelСipher.PBlock(ref roundKey, suppressKeyTable);
+                        DES.PBlock(ref roundKey, suppressKeyTable);
                         result[i] = roundKey;
                     }
                     else
                     {
                         CyclicLeftShift(ref roundKey, 2, true);
                         CyclicRightShift(ref roundKey, 2, false);
-                        FeistelСipher.PBlock(ref roundKey, suppressKeyTable);
+                        DES.PBlock(ref roundKey, suppressKeyTable);
                         result[i] = roundKey;
                     }
                 }
