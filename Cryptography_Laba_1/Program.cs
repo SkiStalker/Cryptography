@@ -36,13 +36,8 @@ namespace Cryptography_Laba_1
 
         private readonly byte[] removeEvenBitsTable = new byte[]
         {
-            57, 49, 41, 33, 25, 17, 09, 01,
-            58, 50, 42, 34, 26, 18, 10, 02,
-            59, 51, 43, 35, 27, 19, 11, 03,
-            60, 52, 44, 36, 63, 55, 47, 39,
-            31, 23, 15, 07, 62, 54, 46, 37,
-            30, 22, 14, 06, 61, 53, 45, 37,
-            29, 21, 13, 05, 28, 20, 12, 04
+            57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36,
+            63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4
         };
 
         byte[] LeftShift(byte[] key, int n)
@@ -81,7 +76,7 @@ namespace Cryptography_Laba_1
             key[5] = (byte)(rightPart[1] << 4 | rightPart[2] >> 4);
             key[6] = (byte)(rightPart[2] << 4 | rightPart[3] >> 4);
         }
-        
+
         public byte[][] ExpandKey(byte[] key)
         {
             byte[][] result = new byte[16][];
@@ -102,8 +97,6 @@ namespace Cryptography_Laba_1
                 byte[] rightPart = new byte[4];
                 GetKeyParts(key, leftPart, rightPart);
 
-                var t = (Program.PrintBits(leftPart) + Program.PrintBits(rightPart) ).CompareTo(Program.PrintBits(key));
-                
                 leftPart = LeftShift(leftPart, off);
                 leftPart[3] = (byte)(((leftPart[3] & (off | 1)) << 4) | leftPart[3] & 0b11110000);
                 rightPart = LeftShift(rightPart, off);
@@ -190,22 +183,26 @@ namespace Cryptography_Laba_1
 
         byte[] expandBlock = new byte[]
         {
-            32, 01, 02, 03, 04, 05,
-            04, 05, 06, 07, 08, 09,
-            08, 09, 10, 11, 12, 13,
+            32, 1, 2, 3, 4, 5,
+            4, 5, 6, 7, 8, 9,
+            8, 9, 10, 11, 12, 13,
             12, 13, 14, 15, 16, 17,
             16, 17, 18, 19, 20, 21,
             20, 21, 22, 23, 24, 25,
             24, 25, 26, 27, 28, 29,
-            28, 29, 31, 31, 32, 01
+            28, 29, 30, 31, 32, 1
         };
 
         byte[] straightPerBlock = new byte[]
         {
-            16, 07, 20, 21, 29, 12, 28, 17,
-            01, 15, 23, 26, 05, 18, 31, 10,
-            02, 08, 24, 14, 32, 27, 03, 09,
-            19, 13, 30, 06, 22, 11, 04, 25
+            16, 7, 20, 21,
+            29, 12, 28, 17,
+            1, 15, 23, 26,
+            5, 18, 31, 10,
+            2, 8, 24, 14,
+            32, 27, 3, 9,
+            19, 13, 30, 6,
+            22, 11, 4, 25
         };
 
         public byte[] RoundEncrypt(byte[] data, byte[] roundKey)
@@ -442,8 +439,8 @@ namespace Cryptography_Laba_1
             byte[] res = new byte[permBlock.Length / 8];
             for (int i = 0; i < permBlock.Length; i++)
             {
-                int newPos = permBlock[i] - 1;
-                int bit = (bytes[newPos / 8] >> (7 - newPos % 8)) & 1;
+                int pos = permBlock[i] - 1;
+                int bit = (bytes[pos / 8] >> (7 - pos % 8)) & 1;
                 res[i / 8] |= (byte)(bit << (7 - i % 8));
             }
 
@@ -453,15 +450,17 @@ namespace Cryptography_Laba_1
         public static byte SBlock(byte[] bytes, byte[][] subBlock, int blockNum)
         {
             int i = (
-                (bytes[(blockNum * 6 + 0) / 8] >> (6 - (blockNum * 6) % 8)) & 0b10
+                (bytes[(blockNum * 6 + 0) / 8] >> (7 - (blockNum * 6) % 8)) << 1 & 0b10
                 |
                 (bytes[(blockNum * 6 + 5) / 8] >> (7 - (blockNum * 6 + 5) % 8)) & 0b1
             );
 
             int j = (
-                (bytes[(blockNum * 6 + 1) / 8] >> (4 - (blockNum * 6 + 1) % 8)) & 0b1000
+                (bytes[(blockNum * 6 + 1) / 8] >> (7 - (blockNum * 6 + 1) % 8)) << 3 & 0b1000
                 |
-                (bytes[(blockNum * 6 + 2) / 8] >> (5 - (blockNum * 6 + 2) % 8)) & 0b110
+                (bytes[(blockNum * 6 + 2) / 8] >> (7 - (blockNum * 6 + 2) % 8)) << 2 & 0b100
+                |
+                (bytes[(blockNum * 6 + 3) / 8] >> (7 - (blockNum * 6 + 3) % 8)) << 1 & 0b10
                 |
                 (bytes[(blockNum * 6 + 4) / 8] >> (7 - (blockNum * 6 + 4) % 8)) & 0b1
             );
@@ -499,7 +498,6 @@ namespace Cryptography_Laba_1
     {
         public static string PrintBits(byte[] arr)
         {
-
             string res = "";
             for (int i = 0; i < arr.Length; i++)
             {
@@ -507,18 +505,18 @@ namespace Cryptography_Laba_1
                 var pad = "";
                 for (int j = 0; j < 8 - tmp.Length; j++)
                     pad += "0";
-                
-                res += pad + tmp + "|";
+
+                res += pad + tmp;
             }
 
             return res;
         }
-        
+
         static void Main(string[] args)
         {
-            byte[] data = Convert.FromHexString("123456ABCD132536");
+            byte[] data = Convert.FromHexString("0123456789ABCDEF");
 
-            byte[] key = Convert.FromHexString("AABB09182736CCDD");
+            byte[] key = Convert.FromHexString("133457799BBCDFF1");
             Cipher cipher = new Cipher(key, Cipher.CryptRule.ECB);
             byte[] res = Array.Empty<byte>();
             cipher.Encrypt(data, ref res);
