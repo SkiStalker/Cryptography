@@ -110,7 +110,7 @@ namespace Cryptography_Laba_1
 
     internal class RoundEncryptor : IRoundEncrypting
     {
-        private readonly byte[][][] subTables = {
+        private static readonly byte[][][] subTables = {
             new[]
             {
                 new byte[] { 14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7 },
@@ -176,7 +176,7 @@ namespace Cryptography_Laba_1
             }
         };
 
-
+        // TODO: make static
         private readonly byte[] expandBlock = {
             32, 1, 2, 3, 4, 5,
             4, 5, 6, 7, 8, 9,
@@ -890,22 +890,18 @@ namespace Cryptography_Laba_1
 
         private static void Main()
         {
-            byte[] data = Convert.FromHexString("123456ABCDE123456789");
 
             byte[] key = Cipher.GenerateKey();
 
             byte[] initVector = Cipher.GenerateInitVector();
 
-            Cipher cipher = new Cipher(key, Cipher.CryptRule.CTR, initVector);
+            Cipher cipher = new Cipher(key, Cipher.CryptRule.RDH, initVector);
             Console.WriteLine($"Key: {Convert.ToHexString(key)}");
             Console.WriteLine($"Init vector: {Convert.ToHexString(initVector)}");
-            byte[] res = Array.Empty<byte>();
-            Console.WriteLine($"Plain data: {Convert.ToHexString(data)}");
-            cipher.Encrypt(data, ref res);
-            Console.WriteLine($"Encrypt data: {Convert.ToHexString(res)}");
+            cipher.Encrypt("C:\\Users\\79832\\Documents\\1.txt", "C:\\Users\\79832\\Documents\\1.crypt");
             
-            cipher.Decrypt(res,out byte[] decrypt);
-            Console.WriteLine($"Decrypt data: {Convert.ToHexString(decrypt)}");
+            cipher.Decrypt("C:\\Users\\79832\\Documents\\1.crypt", "C:\\Users\\79832\\Documents\\1.decrypt.txt");
+            Console.WriteLine("Finished");
             Console.ReadLine();
         }
     }
