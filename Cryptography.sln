@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptography_Laba_1", "Cryp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cryptography_Laba_2", "Cryptography_Laba_2\Cryptography_Laba_2.csproj", "{1F785020-551E-4BF3-8D52-529448E9D064}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test_Cryptography_Laba_2", "Test_Cryptography_Laba_2\Test_Cryptography_Laba_2.csproj", "{FDBCE385-59A9-452A-9485-97AB9435780B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1F785020-551E-4BF3-8D52-529448E9D064}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F785020-551E-4BF3-8D52-529448E9D064}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F785020-551E-4BF3-8D52-529448E9D064}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDBCE385-59A9-452A-9485-97AB9435780B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDBCE385-59A9-452A-9485-97AB9435780B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDBCE385-59A9-452A-9485-97AB9435780B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDBCE385-59A9-452A-9485-97AB9435780B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
