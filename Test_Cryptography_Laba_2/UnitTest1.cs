@@ -48,7 +48,7 @@ public class Tests
     [Test]
     public void Inverse_Test2()
     {
-        byte d = 125;
+        byte d = 0x63;
         Assert.That(
             polynomial.MultPolynomials(d,
                 polynomial.FindReverseElement(d, polynomial.GetStandardIrreduciblePolynomial()),

@@ -1,149 +1,88 @@
-﻿namespace Cryptography_Laba_2
-{
-    public class Polynomial
-    {
-        public byte AddPolynomials(byte left, byte right)
-        {
-            return (byte)(left ^ right);
-        }
+﻿using Cryptography_Laba_1;
 
-        public byte[] GetIrreduciblePolynomials()
+namespace Cryptography_Laba_2
+{
+    public class RijndaelKeyExpanded : IKeyExpanding
+    {
+        public byte Mod { get; set; }
+        public byte BlockLength { get; set; }
+        byte[] RotateLeft(byte[] vec)
         {
-            List<byte> res = new List<byte>();
-            for (int i = 0; i < 256; i++)
+            byte[] res = new byte[vec.Length];
+            for (int i = 0; i < 4; i++)
             {
-                if (IsIrreduciblePolynomial((byte)i))
-                {
-                    res.Add((byte)i);
-                }
+                res[i] = res[(i + 1) % vec.Length];
             }
 
-            return res.ToArray();
+            return res;
         }
         
-        public bool IsIrreduciblePolynomial(byte pol)
+        public byte[] RCon(int i)
         {
-            ushort extPol = (ushort)(pol | (1 << 8));
-            byte del = 2;
-            while (del < 32)
+            ushort res = 0xcb;
+            for (int ind = 0; ind < i + 1; ind++)
             {
-                ushort tmpPol = extPol;
-                byte curPow = FindPow(del);
-                while (true)
+                res <<= 1;
+                if (res > 0xff)
                 {
-                    byte pow = FindPow(tmpPol);
-
-                    sbyte resPow = (sbyte)(pow - curPow);
-
-                    if (resPow < 0)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        tmpPol = (ushort)(tmpPol & ~(1 << pow));
-                        for (int i = 0; i < curPow; i++)
-                        {
-                            tmpPol = (ushort)((tmpPol & ~(1 << (i + resPow))) |
-                                              (((tmpPol >> (i + resPow) & 1) ^ ((del >> i) & 1)) << (i + resPow)));
-                        }
-                    }
-                }
-
-                if (tmpPol == 0)
-                {
-                    return false;
-                }
-                else
-                {
-                    del += 1;
+                    res ^= (ushort)((1 << 8) | Mod);
                 }
             }
 
-            return true;
+            return new byte[] { (byte)res, 0, 0, 0 };
         }
-
-        public byte GetStandardIrreduciblePolynomial()
+        public byte[][] ExpandKey(byte[] key)
         {
-            return 0b11011;
-        }
+            return new byte[0][];
 
-        byte FindPow(ushort pol)
-        {
-            byte pow = 0;
-            while (pol != 0)
-            {
-                pow++;
-                pol >>= 1;
-            }
-
-            return (byte)(pow - 1);
-        }
-
-        public byte FastPow(byte d, byte pow, byte mod)
-        {
-            if (pow == 0)
-            {
-                return 1;
-            }
-            else if (pow % 2 == 0)
-            {
-                return FastPow(MultPolynomials(d, d, mod), (byte)(pow / 2), mod);
-            }
-            else
-            {
-                return MultPolynomials(FastPow(MultPolynomials(d, d, mod), (byte)(pow / 2), mod),
-                    d, mod);
-            }
-        }
-
-        public byte FindReverseElement(byte element, byte mod)
-        {
-            return FastPow(element, 254, mod);
-        }
-
-        public byte MultPolynomials(byte left, byte right, byte mod)
-        {
-            ushort mult = 0;
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    mult = (ushort)((mult & ~(1 << (i + j))) |
-                                    ((left >> i) & (right >> j) & 1 ^ (mult >> (i + j) & 1)) << (i + j));
-                }
-            }
-
-            while (true)
-            {
-                byte pow = FindPow(mult);
-
-                sbyte resPow = (sbyte)(pow - 8);
-
-                if (resPow < 0)
-                {
-                    break;
-                }
-                else
-                {
-                    mult = (ushort)(mult & ~(1 << pow));
-                    for (int i = 0; i < 8; i++)
-                    {
-                        mult = (ushort)((mult & ~(1 << (i + resPow))) |
-                                        (((mult >> (i + resPow) & 1) ^ ((mod >> i) & 1)) << (i + resPow)));
-                    }
-                }
-            }
-
-            return (byte)mult;
         }
     }
 
     static class Program
     {
+        static byte[] GetInverseSMatrix(byte mod)
+        {
+            Polynomial pol = new Polynomial();
+            byte[] res = new byte[256];
+            for (int i = 0; i < 256; i++)
+            {
+
+                byte tmp = (byte)i;
+                tmp = (byte)(CycleLeftShift(tmp, 1) ^ CycleLeftShift(tmp, 3) ^
+                             CycleLeftShift(tmp, 6) ^ 0x05);
+                res[i] = pol.FindReverseElement(tmp, mod);
+            }
+
+            return res;
+        }
+
+        static byte[] GetSMatrix(byte mod)
+        {
+            Polynomial pol = new Polynomial();
+            byte[] res = new byte[256];
+            for (int i = 0; i < 256; i++)
+            {
+                byte tmp = pol.FindReverseElement((byte)i, mod);
+                res[i]= (byte)(tmp ^ CycleLeftShift(tmp, 1) ^ CycleLeftShift(tmp, 2) ^
+                                             CycleLeftShift(tmp, 3) ^ CycleLeftShift(tmp, 4) ^ 0x63);
+            }
+
+            return res;
+        }
+
+        static byte CycleLeftShift(byte d, byte cnt)
+        {
+            return (byte)((d << cnt) | (d >> (8 - cnt)));
+        }
+
         static void Main()
         {
-            byte[] arr = new Polynomial().GetIrreduciblePolynomials();
+            RijndaelKeyExpanded r = new RijndaelKeyExpanded
+            {
+                Mod = new Polynomial().GetStandardIrreduciblePolynomial()
+            };
+            byte[] res = r.RCon(1);
+            int a = 12;
         }
     }
 }
