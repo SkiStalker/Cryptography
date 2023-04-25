@@ -20,18 +20,6 @@
 
         private static void Main()
         {
-
-            byte[] key = Cipher.GenerateKey();
-
-            byte[] initVector = Cipher.GenerateInitVector();
-
-            Cipher cipher = new Cipher(key, Cipher.CryptRule.RDH, initVector);
-            Console.WriteLine($"Key: {Convert.ToHexString(key)}");
-            Console.WriteLine($"Init vector: {Convert.ToHexString(initVector)}");
-            cipher.Encrypt("C:\\Users\\79832\\Documents\\1.txt", "C:\\Users\\79832\\Documents\\1.crypt");
-            
-            cipher.Decrypt("C:\\Users\\79832\\Documents\\1.crypt", "C:\\Users\\79832\\Documents\\1.decrypt.txt");
-            Console.WriteLine("Finished");
             Console.ReadLine();
         }
     }

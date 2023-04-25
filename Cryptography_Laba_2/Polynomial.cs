@@ -113,7 +113,6 @@ public class Polynomial
                                 ((left >> i) & (right >> j) & 1 ^ (mult >> (i + j) & 1)) << (i + j));
             }
         }
-
         while (true)
         {
             byte pow = FindPow(mult);
