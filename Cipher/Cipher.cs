@@ -1,13 +1,13 @@
 ﻿using System.Numerics;
-using System.Security.Cryptography;
-using Cryptography_Laba_2;
-using Rijndael = Cryptography_Laba_2.Rijndael;
+using Block_Cryptography_Algorithm;
+using Des;
+using Rijndael;
 
-namespace Cryptography_Laba_1;
+namespace Cipher;
 
 public class Cipher
 {
-    private IEncrypting blockCryptAlg;
+    private readonly IEncrypting blockCryptAlg;
     private readonly CryptRule cryptRule;
     private readonly byte[]? initVector;
     private readonly AlgorithmType algorithmType;
@@ -123,13 +123,12 @@ public class Cipher
                 {
                     throw new ArgumentException("Incorrect block Rijndael length");
                 }
-
-                Rijndael rijndael = new Rijndael(new RijndaelKeyExpanded(), new RijndaelRoundEncryptor())
+        
+                Rijndael.Rijndael rijndael = new Rijndael.Rijndael(key)
                 {
-                    RoundsCount = Rijndael.GetRoundsCount(bitBlockLength / 8, key.Length),
+                    RoundsCount = Rijndael.Rijndael.GetRoundsCount(bitBlockLength / 8, key.Length),
                     BlockLength = bitBlockLength / 8
                 };
-                rijndael.SetKey(key);
 
                 blockCryptAlg = rijndael;
                 break;

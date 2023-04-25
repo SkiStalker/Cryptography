@@ -1,16 +1,22 @@
-﻿using System.Security.Cryptography;
-using Cryptography_Laba_1;
+﻿using Block_Cryptography_Algorithm;
 
-namespace Cryptography_Laba_2;
+namespace Rijndael;
 
-public class Rijndael : IEncrypting
+public sealed class Rijndael : IEncrypting
 {
     private readonly IKeyExpanding keyExpander;
     private readonly IRoundEncrypting roundEncryptor;
     private byte[]? key;
-    
-    public int BlockLength { get; set; }
+    public int RoundsCount { get; init; }
+    public int BlockLength { get; init; }
 
+    public Rijndael(byte[] key)
+    {
+        keyExpander = new RijndaelKeyExpanded();
+        roundEncryptor = new RijndaelRoundEncryptor();
+        this.key = key;
+    }
+    
     public static byte GetInverseSMatrixElement(byte d, byte mod)
     {
         Polynomial pol = new Polynomial();
@@ -75,8 +81,7 @@ public class Rijndael : IEncrypting
         int nk = keyLength / 4;
         return NrTable[nb / 2 - 2][nk / 2 - 2];
     }
-
-    public int RoundsCount { get; init; }
+    
 
     public Rijndael(IKeyExpanding keyExpander, IRoundEncrypting roundEncryptor)
     {

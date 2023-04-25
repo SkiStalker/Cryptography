@@ -1,8 +1,8 @@
-﻿namespace Cryptography_Laba_1;
+﻿namespace Des;
 
-public class DES : FeistelNetwork
+public sealed class DES : FeistelNetwork
 {
-    private static readonly byte[] startPermBlock = new byte[]
+    private static readonly byte[] StartPermBlock = new byte[]
     {
         58, 50, 42, 34, 26, 18, 10, 02,
         60, 52, 44, 36, 28, 20, 12, 04,
@@ -14,7 +14,7 @@ public class DES : FeistelNetwork
         63, 55, 47, 39, 31, 23, 15, 07
     };
 
-    private static readonly byte[] endPermBlock = new byte[]
+    private static readonly byte[] EndPermBlock = new byte[]
     {
         40, 8, 48, 16, 56, 24, 64, 32,
         39, 7, 47, 15, 55, 23, 63, 31,
@@ -68,9 +68,9 @@ public class DES : FeistelNetwork
     {
         byte[] res = new byte[data.Length];
         data.CopyTo(res, 0);
-        PBlock(ref res, startPermBlock);
+        PBlock(ref res, StartPermBlock);
         res = encrypt ? base.Encrypt(res) : base.Decrypt(res);
-        PBlock(ref res, endPermBlock);
+        PBlock(ref res, EndPermBlock);
         return res;
     }
 

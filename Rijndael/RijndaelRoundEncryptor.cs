@@ -1,9 +1,8 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using Cryptography_Laba_1;
+﻿using Block_Cryptography_Algorithm;
 
-namespace Cryptography_Laba_2;
+namespace Rijndael;
 
-public class RijndaelRoundEncryptor : IRoundEncrypting
+internal sealed class RijndaelRoundEncryptor : IRoundEncrypting
 {
     private int localRoundsCount;
     public byte[]? SBox { get; set; }
@@ -25,7 +24,7 @@ public class RijndaelRoundEncryptor : IRoundEncrypting
 
     public bool Encrypt { get; set; }
 
-    public byte[] GetShiftValues(int blockLength)
+    private byte[] GetShiftValues(int blockLength)
     {
         int nb = blockLength / 4;
         if (nb == 4 || nb == 6)

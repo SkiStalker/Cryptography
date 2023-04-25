@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Block_Cryptography_Algorithm\Block_Cryptography_Algorithm.csproj" />
+      <ProjectReference Include="..\Des\Des.csproj" />
+      <ProjectReference Include="..\Rijndael\Rijndael.csproj" />
+    </ItemGroup>
+
+</Project>

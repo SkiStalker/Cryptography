@@ -1,8 +1,10 @@
-﻿namespace Cryptography_Laba_1;
+﻿using Block_Cryptography_Algorithm;
 
-public class DesRoundEncryptor : IRoundEncrypting
+namespace Des;
+
+internal sealed class DesRoundEncryptor : IRoundEncrypting
 {
-    private static readonly byte[][][] subTables = {
+    private static readonly byte[][][] SubTables = {
         new[]
         {
             new byte[] { 14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7 },
@@ -68,7 +70,7 @@ public class DesRoundEncryptor : IRoundEncrypting
         }
     };
     
-    private static readonly byte[] expandBlock = {
+    private static readonly byte[] ExpandBlock = {
         32, 1, 2, 3, 4, 5,
         4, 5, 6, 7, 8, 9,
         8, 9, 10, 11, 12, 13,
@@ -79,7 +81,7 @@ public class DesRoundEncryptor : IRoundEncrypting
         28, 29, 30, 31, 32, 1
     };
 
-    private static readonly byte[] straightPerBlock = {
+    private static readonly byte[] StraightPerBlock = {
         16, 7, 20, 21,
         29, 12, 28, 17,
         1, 15, 23, 26,
@@ -98,7 +100,7 @@ public class DesRoundEncryptor : IRoundEncrypting
         byte[] rightPart = res.Take(new Range(4, 8)).ToArray();
         byte[] newRightPart = new byte[4];
 
-        DES.PBlock(ref rightPart, expandBlock);
+        DES.PBlock(ref rightPart, ExpandBlock);
 
         for (int i = 0; i < 6; i++)
         {
@@ -107,11 +109,11 @@ public class DesRoundEncryptor : IRoundEncrypting
 
         for (int i = 0; i < 8; i++)
         {
-            byte tmp = DES.SBlock(rightPart, subTables[i], i);
+            byte tmp = DES.SBlock(rightPart, SubTables[i], i);
             newRightPart[i / 2] |= (byte)(tmp << (4 * ((i + 1) % 2)));
         }
 
-        DES.PBlock(ref newRightPart, straightPerBlock);
+        DES.PBlock(ref newRightPart, StraightPerBlock);
 
         for (int i = 0; i < 4; i++)
         {

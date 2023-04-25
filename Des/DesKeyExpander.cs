@@ -1,8 +1,10 @@
-﻿namespace Cryptography_Laba_1;
+﻿using Block_Cryptography_Algorithm;
 
-public class DesKeyExpander : IKeyExpanding
+namespace Des;
+
+internal sealed class DesKeyExpander : IKeyExpanding
 {
-    private static readonly byte[] suppressKeyTable = new byte[]
+    private static readonly byte[] SuppressKeyTable = new byte[]
     {
         14, 17, 11, 24, 01, 05, 03, 28,
         15, 06, 21, 10, 23, 19, 12, 04,
@@ -12,7 +14,7 @@ public class DesKeyExpander : IKeyExpanding
         34, 53, 46, 42, 50, 36, 29, 32
     };
 
-    private static readonly byte[] removeEvenBitsTable = new byte[]
+    private static readonly byte[] RemoveEvenBitsTable = new byte[]
     {
         57, 49, 41, 33, 25, 17, 9, 1, 58, 50, 42, 34, 26, 18, 10, 2, 59, 51, 43, 35, 27, 19, 11, 3, 60, 52, 44, 36,
         63, 55, 47, 39, 31, 23, 15, 7, 62, 54, 46, 38, 30, 22, 14, 6, 61, 53, 45, 37, 29, 21, 13, 5, 28, 20, 12, 4
@@ -58,7 +60,7 @@ public class DesKeyExpander : IKeyExpanding
     public byte[][] ExpandKey(byte[] key)
     {
         byte[][] result = new byte[16][];
-        DES.PBlock(ref key, removeEvenBitsTable);
+        DES.PBlock(ref key, RemoveEvenBitsTable);
         for (int i = 0; i < 16; i++)
         {
             int off = i is 0 or 1 or 8 or 15 ? 1 : 2;
@@ -80,7 +82,7 @@ public class DesKeyExpander : IKeyExpanding
                 
             byte[] roundKey = new byte[key.Length];
             key.CopyTo(roundKey, 0);
-            DES.PBlock(ref roundKey, suppressKeyTable);
+            DES.PBlock(ref roundKey, SuppressKeyTable);
             result[i] = roundKey;
         }
 

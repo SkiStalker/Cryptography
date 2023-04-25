@@ -1,8 +1,8 @@
-﻿using Cryptography_Laba_1;
+﻿using Block_Cryptography_Algorithm;
 
-namespace Cryptography_Laba_2;
+namespace Rijndael;
 
-public class RijndaelKeyExpanded : IKeyExpanding
+internal sealed class RijndaelKeyExpanded : IKeyExpanding
 {
     public byte Mod { get; set; }
     public int BlockLength { get; set; }
@@ -21,7 +21,7 @@ public class RijndaelKeyExpanded : IKeyExpanding
         return word;
     }
 
-    byte[] SubByte(byte[] vec)
+    private byte[] SubByte(byte[] vec)
     {
         if (SBox == null)
         {
@@ -60,7 +60,7 @@ public class RijndaelKeyExpanded : IKeyExpanding
     }
 
 
-    public byte[,] KeyExpansion(byte[] key)
+    private byte[,] KeyExpansion(byte[] key)
     {
         int nb = BlockLength / 4;
         int nk = key.Length / 4;

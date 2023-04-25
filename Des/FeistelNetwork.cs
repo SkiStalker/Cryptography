@@ -1,4 +1,6 @@
-﻿namespace Cryptography_Laba_1;
+﻿using Block_Cryptography_Algorithm;
+
+namespace Des;
 
 public class FeistelNetwork : IEncrypting
 {

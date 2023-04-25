@@ -1,4 +1,4 @@
-﻿namespace Cryptography_Laba_1;
+﻿namespace Block_Cryptography_Algorithm;
 
 public interface IKeyExpanding
 {

@@ -1,6 +1,6 @@
-﻿namespace Cryptography_Laba_2;
+﻿namespace Rijndael;
 
-public class Polynomial
+internal class Polynomial
 {
     public byte AddPolynomials(byte left, byte right)
     {
