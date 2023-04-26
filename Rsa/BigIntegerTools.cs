@@ -24,28 +24,30 @@ public static class BigIntegerTools
         return result;
     }
 
-    public static BigInteger GCDEx(BigInteger a, BigInteger b, ref BigInteger? x, ref BigInteger? y)
+    public static BigInteger GcdEx(BigInteger a, BigInteger b, out BigInteger x, out BigInteger y)
     {
-        if (a == BigInteger.Zero)
+        if (b < a)
         {
-            x = BigInteger.Zero;
-            y = BigInteger.One;
+            (a, b) = (b, a);
+        }
+    
+        if (a == 0)
+        {
+            x = 0;
+            y = 1;
             return b;
         }
-
-        BigInteger? x1 = null;
-        BigInteger? y1 = null;
-        BigInteger d = GCDEx(b % a, a, ref x1, ref y1);
-        if (x1 == null || y1 == null)
-        {
-            throw new NullReferenceException();
-        }
-
-        x = y1.Value - (b / a) * (x1.Value);
-        y = x1;
-        return d;
-    }
+ 
+        BigInteger gcd = GcdEx(b % a, a, out x, out y);
     
+        BigInteger newY = x;
+        BigInteger newX = y - (b / a) * x;
+    
+        x = newX;
+        y = newY;
+        return gcd;
+    }
+
     public static BigInteger Sqrt(BigInteger n)
     {
         if (n == 0) return 0;

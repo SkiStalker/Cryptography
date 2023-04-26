@@ -145,8 +145,8 @@ public class RSA
         {
             throw new NullReferenceException();
         }
-        
-        
+
+
         // Fermat defence (because using strong randomly generator)
         BigInteger n = p.Value * q.Value;
 
@@ -154,15 +154,40 @@ public class RSA
 
         bool correctE = false;
         BigInteger? e = null;
+        BigInteger? d = null;
+        bool wienerStrong = false;
 
-        while (!correctE)
+        while (!wienerStrong)
         {
-            Semaphore semE = new Semaphore(0, threadsCnt);
-            Mutex mutexE = new Mutex(false);
-            bool findE = false;
-            for (int i = 0; i < threadsCnt; i++)
+            while (!correctE)
             {
-                new Thread(() => { GeneratePrimaryDigit(ref e, ref findE, semE, mutexE, 1.5); }).Start();
+                Semaphore semE = new Semaphore(0, threadsCnt);
+                Mutex mutexE = new Mutex(false);
+                bool findE = false;
+                for (int i = 0; i < threadsCnt; i++)
+                {
+                    new Thread(() => { GeneratePrimaryDigit(ref e, ref findE, semE, mutexE, 1.5); }).Start();
+                }
+
+                for (int i = 0; i < threadsCnt; i++)
+                {
+                    semE.WaitOne();
+                }
+
+                if (e == null)
+                {
+                    throw new NullReferenceException();
+                }
+
+                if (e.Value > (euler - BigInteger.One))
+                {
+                    continue;
+                }
+
+                if (BigInteger.GreatestCommonDivisor(e.Value, euler) == BigInteger.One)
+                {
+                    correctE = true;
+                }
             }
 
             if (e == null)
@@ -170,57 +195,31 @@ public class RSA
                 throw new NullReferenceException();
             }
 
-            for (int i = 0; i < threadsCnt; i++)
+
+            BigIntegerTools.GcdEx(e.Value, euler, out BigInteger localD, out BigInteger y);
+
+            if (localD < 0)
             {
-                semE.WaitOne();
+                BigInteger k = (-localD) / euler;
+                localD += (k + 2) * euler;
             }
 
-            if (e.Value > (euler - BigInteger.One))
+            if (localD >= BigIntegerTools.Sqrt(BigIntegerTools.Sqrt(n)))
             {
-                continue;
-            }
-
-            if (BigInteger.GreatestCommonDivisor(e.Value, euler) == BigInteger.One)
-            {
-                correctE = true;
-                BigInteger tmpE = e.Value;
-                
-                // Wiener defence
-                BigInteger n32 = BigIntegerTools.Sqrt(n * n * n);
-                if (tmpE <= n32)
-                {
-                    BigInteger k = (n32 - tmpE) / euler;
-                    tmpE += (k + 1)*euler;
-                }
-
-                e = tmpE;
+                d = localD;
+                wienerStrong = true;
             }
         }
 
-        if (e == null)
+        if (e == null || d == null)
         {
             throw new NullReferenceException();
-        }
-
-        BigInteger? nullableD = null;
-        BigInteger? y = null;
-        BigInteger gc = BigIntegerTools.GCDEx(e.Value, euler, ref nullableD, ref y);
-
-        if (nullableD == null)
-        {
-            throw new NullReferenceException();
-        }
-
-        BigInteger d = nullableD.Value;
-        while (d < 0)
-        {
-            d += euler;
         }
 
         return new Keys
         {
             E = e.Value,
-            D = d,
+            D = d.Value,
             N = n
         };
     }

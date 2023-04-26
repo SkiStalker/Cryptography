@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cipher\Cipher.csproj" />
+    <ProjectReference Include="..\Rsa\Rsa.csproj" />
   </ItemGroup>
 
 </Project>
